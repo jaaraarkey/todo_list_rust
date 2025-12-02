@@ -1,17 +1,21 @@
+use serde::{Deserialize, Serialize};
+use serde_json;
+use std::fs::File;
+use std::io::BufReader;
+use std::path::Path; // Added for serde_json::to_writer and from_reader
+
 // src/model.rs
 
 // We'll need to serialize these later, but for now let's just derive Debug and Clone.
 // 'pub' means these structs and fields are accessible from other modules (like our future View).
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TodoItem {
     pub id: u64,
     pub title: String,
     pub completed: bool,
 }
 
-
-
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TodoList {
     pub items: Vec<TodoItem>,
 }
@@ -48,6 +52,24 @@ impl TodoList {
             return true;
         }
         false
+    }
+
+    // Save the list to a JSON file
+    pub fn save(&self) -> Result<(), std::io::Error> {
+        let file = File::create("db.json")?;
+        serde_json::to_writer(file, &self)?;
+        Ok(())
+    }
+
+    // Load the list from a JSON file
+    pub fn load() -> Result<TodoList, std::io::Error> {
+        if !Path::new("db.json").exists() {
+            return Ok(TodoList::new());
+        }
+        let file = File::open("db.json")?;
+        let reader = BufReader::new(file);
+        let list = serde_json::from_reader(reader)?;
+        Ok(list)
     }
 }
 
