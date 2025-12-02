@@ -56,6 +56,23 @@ fn main() -> Result<(), Box<dyn Error>> {
                 Err(_) => view::print_error("Invalid ID provided"),
             }
         }
+        "delete" => {
+            if args.len() < 3 {
+                view::print_error("Please provide the ID of the task to delete");
+                return Ok(());
+            }
+            match args[2].parse::<u64>() {
+                Ok(id) => {
+                    if todo_list.delete(id) {
+                        todo_list.save()?;
+                        view::print_message(&format!("Task {} deleted", id));
+                    } else {
+                        view::print_error("Task not found");
+                    }
+                }
+                Err(_) => view::print_error("Invalid ID provided"),
+            }
+        }
         "help" => {
             view::print_help();
         }

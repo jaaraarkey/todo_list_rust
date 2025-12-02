@@ -6,6 +6,7 @@ pub fn print_help() {
     println!("  add <title>    - Add a new task");
     println!("  list           - List all tasks");
     println!("  done <id>      - Mark a task as completed");
+    println!("  delete <id>    - Delete a task");
     println!("  help           - Show this help message");
 }
 

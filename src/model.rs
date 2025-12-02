@@ -71,6 +71,16 @@ impl TodoList {
         let list = serde_json::from_reader(reader)?;
         Ok(list)
     }
+
+    // Delete an item by ID
+    // Returns true if found and deleted, false if not
+    pub fn delete(&mut self, id: u64) -> bool {
+        if let Some(index) = self.items.iter().position(|i| i.id == id) {
+            self.items.remove(index);
+            return true;
+        }
+        false
+    }
 }
 
 #[cfg(test)]
